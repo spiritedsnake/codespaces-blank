@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>empty your heart. share.</title>
+    <style>
+      h1 {
+        text-align: center;
+        font-family: MATE SC;
+      }
+      h2 {
+        text-align: center;
+        font-family: MATE SC;
+        color: black;
+      }
+      #thoughts-input {
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+      }
+      #thoughts-form {
+        text-align: center;
+      }
+      hr {
+        margin: 10px 0;
+        border: none;
+        border-top: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body style="background-color: white;">
+    <h1>secretly anonymous</h1>
+    <h2>empty your heart. share.</h2>
+    <form id="thoughts-form">
+      <textarea id="thoughts-input" maxlength="250"></textarea>
+      <br>
+      <button type="submit">Post</button>
+    </form>
+    <ul id="thoughts-list"></ul>
+
+    <script>
+      const MAX_THOUGHTS = 30;
+
+      // Load thoughts from local storage
+      let thoughts = JSON.parse(localStorage.getItem("thoughts") || "[]");
+
+      // Update UI with existing thoughts
+      for (const thought of thoughts) {
+        addThoughtToUI(thought);
+      }
+
+      // Handle form submission
+      const form = document.getElementById("thoughts-form");
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const input = document.getElementById("thoughts-input");
+        const text = input.value.trim();
+        if (text) {
+          const thought = { text, timestamp: Date.now() };
+          thoughts.push(thought);
+          addThoughtToUI(thought);
+          input.value = "";
+          localStorage.setItem("thoughts", JSON.stringify(thoughts));
+          if (thoughts.length > MAX_THOUGHTS) {
+            thoughts.shift();
+          }
+        }
+      });
+
+      // Add a thought to the UI
+      function addThoughtToUI(thought) {
+        const list = document.getElementById("thoughts-list");
+        const item = document.createElement("li");
+        const date = new Date(thought.timestamp);
+        const dateString = date.toLocaleString();
+        item.innerText = `${thought.text} (${dateString})`;
+        list.appendChild(item);
+        list.appendChild(document.createElement("hr"));
+        list.appendChild(document.createElement("br"));
+      }
+    </script>
+  </body>
+</html>
